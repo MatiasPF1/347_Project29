@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alset IoT – Team 29</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="hero">
+  <h1>Alset IoT — Hugs the Lanes</h1>
+  <div class="sub">Autonomous Vehicle Software · Interactive Demo</div>
+  <div class="team">Team 29 · Matias · Naidelyn · Maya · Anshu</div>
+  <div class="hero-road"></div>
+</div>
+
+<nav class="nav" id="nav">
+  <button class="active" data-sec="simulation">Simulation</button>
+  <button data-sec="technician">Technician</button>
+</nav>
+
+<!-- SIMULATION -->
+<div class="section active" id="sec-simulation">
+  <h2>Live Simulation</h2>
+  <p class="desc">Each scenario runs the same logic as Av_Team29.py. Watch the dashboard, road, and logs respond in real time.</p>
+
+  <div class="dashboard" id="dashboard">
+    <div class="dash-item" id="d-speed"><span class="d-icon">🏎️</span><div class="label">Speed</div><div class="value" id="v-speed">0</div></div>
+    <div class="dash-item" id="d-controller"><span class="d-icon">🕹️</span><div class="label">Control</div><div class="value" id="v-controller" style="font-size:0.75rem">—</div></div>
+    <div class="dash-item" id="d-status"><span class="d-icon">🔋</span><div class="label">Status</div><div class="value" id="v-status" style="font-size:0.75rem">OFF</div></div>
+    <div class="dash-item" id="d-ttc"><span class="d-icon">⏱️</span><div class="label">TTC</div><div class="value" id="v-ttc">∞</div></div>
+    <div class="dash-item" id="d-brake"><span class="d-icon">🛑</span><div class="label">Brake</div><div class="value" id="v-brake">0.0</div></div>
+    <div class="dash-item" id="d-steer"><span class="d-icon">🔄</span><div class="label">Steer</div><div class="value" id="v-steer">0.0°</div></div>
+  </div>
+
+  <div class="vehicle-viz">
+    <div class="viz-sky">
+      <div class="viz-cloud c1"></div>
+      <div class="viz-cloud c2"></div>
+    </div>
+    <div class="viz-ground"></div>
+    <div class="viz-tree l1">🌳</div>
+    <div class="viz-tree l2">🌲</div>
+    <div class="viz-tree r1">🌳</div>
+    <div class="viz-tree r2">🌲</div>
+    <div class="road">
+      <div class="road-dashes" id="road-dashes"></div>
+    </div>
+    <div class="detection-ring" id="detect-ring"></div>
+    <div class="car-icon" id="car-icon">🚗</div>
+    <div class="obstacle-icon" id="obstacle-icon">🚶</div>
+    <div class="traffic-light">
+      <div class="tl-dot r" id="tl-r"></div>
+      <div class="tl-dot y" id="tl-y"></div>
+      <div class="tl-dot g" id="tl-g"></div>
+    </div>
+    <div class="viz-hud">
+      <span>spd</span>
+      <strong id="hud-spd">0 km/h</strong>
+      <span>|</span>
+      <span id="hud-mode">OFF</span>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn primary" onclick="runScenario('startup')">🚀 Start Vehicle</button>
+    <button class="btn" onclick="runScenario('cruise')">🛣️ Cruise</button>
+    <button class="btn" onclick="runScenario('emergency')">🚨 Emergency Brake</button>
+    <button class="btn" onclick="runScenario('pedestrian')">🚶 Pedestrian</button>
+    <button class="btn" onclick="runScenario('lane_drift')">↔️ Lane Drift</button>
+    <button class="btn" onclick="runScenario('traffic_red')">🔴 Red Light</button>
+    <button class="btn" onclick="runScenario('traffic_green')">🟢 Green Light</button>
+    <button class="btn" onclick="runScenario('override')">🧑 Override</button>
+    <button class="btn" onclick="runScenario('crash_detect')">💥 Crash Detect</button>
+    <button class="btn danger" onclick="clearSim()">↺ Reset</button>
+  </div>
+
+  <div class="card">
+    <h3>🖥️ System Log <span class="badge blue" id="log-count">0 events</span></h3>
+    <div class="log-console" id="sim-log">
+      <div class="log-line"><span class="ts">ready</span> <span class="det">Click a scenario above to begin.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TECHNICIAN -->
+<div class="section" id="sec-technician">
+  <h2>Technician Portal</h2>
+  <p class="desc">Multi-factor authentication — Requirement 3.1.11 · Use Case 4</p>
+
+  <div class="grid-2">
+    <div class="card auth-card">
+      <h3>🔐 Authentication</h3>
+      <div class="login-form">
+        <label>Username</label>
+        <input type="text" id="tech-user" value="tech1">
+        <label>Password</label>
+        <input type="password" id="tech-pass" value="securepass123">
+        <label>OTP</label>
+        <input type="text" id="tech-otp" value="123456">
+        <div class="btn-group" style="justify-content:flex-start;margin-top:10px;">
+          <button class="btn primary" onclick="techLogin()">Login</button>
+          <button class="btn" onclick="techLogout()">Logout</button>
+        </div>
+      </div>
+      <div id="tech-status" style="margin-top:10px;font-size:0.8rem;"></div>
+    </div>
+    <div class="card">
+      <h3>🔧 Maintenance</h3>
+      <div id="tech-panel" style="opacity:0.35;pointer-events:none;">
+        <div class="btn-group" style="justify-content:flex-start;">
+          <button class="btn" onclick="techViewLogs()">View Logs</button>
+          <button class="btn" onclick="techRunDiag()">Diagnostics</button>
+          <button class="btn primary" onclick="techUpdate()">Install v2.1.0</button>
+        </div>
+        <div id="tech-result" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px;">
+    <h3>📋 Activity Log</h3>
+    <div class="log-console" id="tech-log">
+      <div class="log-line"><span class="det">Waiting for login...</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Alset IoT · Team 29 · CS347 Spring 2026 🛣️</div>
+
+<script src="script.js"></script>
+</body>
+</html>
